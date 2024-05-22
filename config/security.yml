@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-server
+
+--- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole 
+kind: Role 
+metadata: 
+  name: node-server-read
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "watch", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+kind: RoleBinding
+metadata:
+  name: node-server-read-binding
+subjects:
+  - kind: ServiceAccount
+    name: node-server
+    namespace: prod
+roleRef:
+  # kind: ClusterRole
+  kind: Role
+  name: node-server-read
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: node-server
+  labels:
+    app: node-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-server
+  template:
+    metadata:
+      labels:
+        app: node-server
+    spec:
+      containers:
+        - name: node-server-container
+          image: "ruanwill/k8s:latest"

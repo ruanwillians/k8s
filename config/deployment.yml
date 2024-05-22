@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    app: node-server
+  name: node-server
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-server
+  template:
+    metadata:
+      labels:
+        app: node-server
+    spec:
+      serviceAccountName: node-server
+      containers:
+        - name: node-server-container
+          image: ruanwill/k8s:v6
+          envFrom:
+            - configMapRef:
+                name: node-server-env
+            - secretRef:
+                name: node-server-secret
+          livenessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 3
+            successThreshold: 1
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 3
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "25Mi"
+            requests:
+              cpu: "200m"
+              memory: "20Mi"
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 3
+          volumeMounts:
+            - mountPath: /node/pvc
+              name: node-server-volume
+      volumes:
+        - name: node-server-volume
+          persistentVolumeClaim:
+            claimName: node-server-pvc

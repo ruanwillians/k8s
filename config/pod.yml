@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-server-pod  
+  labels:
+    name: node-server
+spec:
+  containers:
+  - name: node-server-container  
+    image: "ruanwill/k8s:latest" 
